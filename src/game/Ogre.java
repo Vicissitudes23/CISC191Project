@@ -21,18 +21,36 @@ package game;
  */
 /**
  */
+import util.TextUtils;
 
-public abstract class Enemy extends BaseCharacter
-//is-a basecharacter
+public class Ogre extends Enemy
+//is-a enemy
 {
-
-	public Enemy(String name, int health, int attack)
+	public Ogre()
 	{
-		super(name, health, attack);
-		// TODO Auto-generated constructor stub
+		super("Ogre", 80, 25);
 	}
 	
-	public abstract void takeTurn(Player player);
+	int rage = 0;
+	int turn = 1;
 
-
+	@Override
+	public void takeTurn(Player player)
+	{
+		if (turn == 1)
+		{
+			TextUtils.slowPrint("The ogre slowly walks up to you while readying itself", 20 );
+			rage += 2;
+		}
+		else
+		{
+			int damage = getAttack() + rage;
+			TextUtils.slowPrint("The ogre angrily swings at you", 20 );
+			player.takeDamage(damage);
+			
+			TextUtils.slowPrint("The ogre's face reddens", 20 );
+			
+		}
+			
+	}
 }

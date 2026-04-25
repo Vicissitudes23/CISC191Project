@@ -27,7 +27,7 @@ public class BaseCharacter
 
 	private String name;//has-a
 	private int health;//has-a
-	private int ATK;//has-a
+	private int attack;//has-a
 	private boolean Blocking;
 
 		
@@ -35,7 +35,7 @@ public class BaseCharacter
 	{
 		this.name = name;
 		this.health = health;
-		this.ATK = attack;
+		this.attack = attack;
 	}
 		
 	public void takeDamage(int damage)
@@ -68,7 +68,7 @@ public class BaseCharacter
 	
 	public int getAttack()
 	{
-		return ATK;
+		return attack;
 	}
 		
 	public String getName()
@@ -84,27 +84,27 @@ public class BaseCharacter
 		this.name = name;
 	}
 		
-	public void setHP(int hp)
+	public void setHealth(int amount)
 	{
-		this.health = hp;
+		this.health = amount;
 	}
 		
-	public void setAttack(int attack)
+	public void setAttack(int amount)
 	{
-		this.ATK = attack;
+		this.attack = amount;
 	}
 		
 	public void increaseAttack(int amount)
 	{
-		this.ATK += amount;
+		this.attack += amount;
 	}
 	
 	public void decreaseAttack(int amount)
 	{
-		this.ATK -= amount;
-		if (this.ATK < 0)//caps the lower limit to 0
+		this.attack -= amount;
+		if (this.attack < 0)//caps the lower limit to 0
 		{
-			this.ATK = 0;
+			this.attack = 0;
 		}
 	}
 		
@@ -114,12 +114,12 @@ public class BaseCharacter
 		health += amount;
 	}
 	
-	public void StartBlock()//Blocking
+	public void startBlock()//Blocking
 	{
 		Blocking = true;
 	}
 	
-	public void EndBlock()
+	public void endBlock()
 	{
 		Blocking = false;
 	}
@@ -128,7 +128,7 @@ public class BaseCharacter
 	//Show Stats
 	public void showStats()
 	{
-		System.out.println("\nCharacter: " + name + " | HP: "+ health + " | ATK: " + ATK);
+		System.out.println("\nCharacter: " + name + " | HP: "+ health + " | attack: " + attack);
 	}
 	
 

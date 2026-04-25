@@ -1,4 +1,6 @@
 package game;
+
+import util.TextUtils;
 /**
  * Lead Author(s):
  * @Matthew Chang
@@ -21,18 +23,26 @@ package game;
  */
 /**
  */
-
-public abstract class Enemy extends BaseCharacter
-//is-a basecharacter
+public class Rat extends Enemy
 {
-
-	public Enemy(String name, int health, int attack)
+	public Rat()
 	{
-		super(name, health, attack);
-		// TODO Auto-generated constructor stub
+		super("Rat", 90, 2);
 	}
-	
-	public abstract void takeTurn(Player player);
+	private int turn = 1;
+	private int bites;
+	@Override
+	public void takeTurn(Player player)
+	{
+		
+		TextUtils.slowPrint("The Rat bites you, and it really hurts", 20 );
+		bites += 1;
+		
 
-
+		player.takeDamage(getAttack());
+		TextUtils.slowPrint("Your previous wounds hurt so much...", 20 );
+		player.takeDamage(bites*4);
+	}
 }
+
+	

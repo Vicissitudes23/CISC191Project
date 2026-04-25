@@ -21,18 +21,33 @@ package game;
  */
 /**
  */
-
-public abstract class Enemy extends BaseCharacter
-//is-a basecharacter
+public class Item
 {
-
-	public Enemy(String name, int health, int attack)
+	private String name;//has-a
+	private String description;//has-a
+	private int power;//has-a
+	
+	
+	
+	public Item(String name, String description, int power)
 	{
-		super(name, health, attack);
-		// TODO Auto-generated constructor stub
+		this.name = name;
+		this.description = description;
+		this.power = power;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public int getPower()
+	{
+		return power;
+	}
+	public String getDescription()
+	{
+		return description;
 	}
 	
-	public abstract void takeTurn(Player player);
-
-
 }

@@ -1,4 +1,4 @@
-package game;
+package util;
 /**
  * Lead Author(s):
  * @Matthew Chang
@@ -21,18 +21,24 @@ package game;
  */
 /**
  */
-
-public abstract class Enemy extends BaseCharacter
-//is-a basecharacter
+public class TextUtils
 {
-
-	public Enemy(String name, int health, int attack)
+	public static void slowPrint(String text, int duration)
 	{
-		super(name, health, attack);
-		// TODO Auto-generated constructor stub
+		for (int i = 0; i <text.length(); i++)
+		{
+			System.out.print(text.charAt(i));
+			try
+			{
+				Thread.sleep(duration);
+			}
+			catch (InterruptedException e)
+			{
+				Thread.currentThread().interrupt();
+			}
+			
+		}
+		System.out.println();
 	}
-	
-	public abstract void takeTurn(Player player);
-
 
 }

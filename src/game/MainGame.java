@@ -1,9 +1,9 @@
 package game;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
+
 import java.util.Scanner;
 
 import util.TextUtils;
@@ -39,7 +39,8 @@ public class MainGame
 	private Player player;// player variable
 	private List<Occurrence> possibleOccurrences = new ArrayList<>(); //has-many Occurrences stores all possible occurrences that can be randomly selected
 	private int occurrenceCount = 0; //number of events or things have happened
-	private Map<String, Item> itemDatabase = new HashMap<>();
+	
+	private CombatManager combatManager;
 
 	
 	public MainGame()
@@ -51,9 +52,10 @@ public class MainGame
 	{
 		MainGame game = new MainGame();
 		game.start();
+		
 	}
 	
-	public void start()// called in main.java to start the game
+	public void start()
 	{
 		System.out.println("Hello! Welcome!");
 
@@ -64,7 +66,7 @@ public class MainGame
 
 	}
 
-	private void mainMenu()
+	public void mainMenu()
 	{
 		while (true)
 		{
@@ -80,7 +82,8 @@ public class MainGame
 			switch (choice)
 			{
 				case "1":
-					player.setCurrency(200);
+					
+					combatManager = new CombatManager(player, this);
 					System.out.print("Enter your player name: ");
 					String name = sc.nextLine();
 					player.setName(name);
@@ -112,45 +115,7 @@ public class MainGame
 	}
 	
 	
-	private void setupOccurrences()
-	{
-		possibleOccurrences.add(new Occurrence(
-				"Warrior On the Road",
-				"You cross paths with a warrior on the road.",
-				() -> warriorEvent()
-				));
-		possibleOccurrences.add(new Occurrence(
-				"Goblin Encounter",
-				"A goblin jumpscares you on the road.",
-				() -> goblinEvent()
-				));
-		possibleOccurrences.add(new Occurrence(
-				"Goblin robbery",
-				"A goblin wants your money",
-				() -> robberyEvent()
-				));
-		possibleOccurrences.add(new Occurrence(
-				"Suspicious drawer",
-				"You found a drawer in an abandoned building",
-				() -> investigateDrawer()
-				));
-		possibleOccurrences.add(new Occurrence(
-				"Wolf attack",
-				 "You hear a howl and see a wolf running at you!",
-				 () -> wolfAttack()
-				 ));
-		possibleOccurrences.add(new Occurrence(
-				"Crazy encounter",
-				"A crazy man runs at you saying profanities",
-				() -> crazedMan()
-				));
-		possibleOccurrences.add(new Occurrence(
-				"Strange Cheese",
-				"You find a cheese in the middle of the road.",
-				() -> ratQuest()
-				));
-	}
-	
+
 	
 	private void startJourney()
 	{
@@ -184,6 +149,58 @@ public class MainGame
 
 	
 
+
+	private void saveGame()
+	{
+		// TODO Auto-generated method stub
+	}
+	
+	private void loadGame()
+	{
+		// TODO Auto-generated method stub	
+	}
+	
+	
+	
+	
+	private void setupOccurrences()
+	{
+		possibleOccurrences.add(new Occurrence(
+				"Warrior On the Road",
+				"You cross paths with a warrior on the road.",
+				() -> warriorEvent()
+				));
+		possibleOccurrences.add(new Occurrence(
+				"Goblin Encounter",
+				"A goblin jumpscares you on the road.",
+				() -> goblinEvent()
+				));
+		possibleOccurrences.add(new Occurrence(
+				"Goblin robbery",
+				"A goblin wants your money",
+				() -> robberyEvent()
+				));
+		possibleOccurrences.add(new Occurrence(
+				"Suspicious drawer",
+				"You found a drawer in an abandoned building",
+				() -> investigateDrawer()
+				));
+		possibleOccurrences.add(new Occurrence(
+				"Wolf attack",
+				 "You hear a howl and see a wolf running at you!",
+				 () -> wolfAttack()
+				 ));
+		possibleOccurrences.add(new Occurrence(
+				"Strange Cheese",
+				"You find a cheese in the middle of the road.",
+				() -> ratQuest()
+				));
+		possibleOccurrences.add(new Occurrence(
+				"Ogre roadblock",
+				"An ogre is standing in front of you...",
+				() -> ogreBlocking()
+				));
+	}
 	
 	
 	private void triggerRandomOccurrence()
@@ -199,9 +216,6 @@ public class MainGame
 				player.heal(10);
 				
 				player.changeCurrency(-25);
-				
-				TextUtils.slowPrint("You have " + player.getCurrency() + " gold left", 20);
-				
 				TextUtils.slowPrint("\n The Journey Continues...", 30);
 			}
 							
@@ -226,16 +240,6 @@ public class MainGame
 		}
 		
 	}
-	private void saveGame()
-	{
-		// TODO Auto-generated method stub
-	}
-	
-	private void loadGame()
-	{
-		// TODO Auto-generated method stub	
-	}
-	
 	
 	private void warriorEvent()
 	{
@@ -249,7 +253,7 @@ public class MainGame
 			case "1":
 				TextUtils.slowPrint("You draw your weapon and take a fighting stance", 15);
 				Enemy warrior = new Warrior();
-				startBattle(warrior);
+				combatManager.startBattle(warrior);
 				break;
 			
 			case "2":
@@ -280,7 +284,7 @@ public class MainGame
 	{
 		TextUtils.slowPrint("You ready yourself for a fight", 15);
 		Enemy wolf = new Wolf();
-		startBattle(wolf);
+		combatManager.startBattle(wolf);
 	}
 	
 	
@@ -306,7 +310,7 @@ public class MainGame
 				TextUtils.slowPrint("An offended rat comes up to you and attacks!", 15);
 				TextUtils.slowPrint("You ready yourself for a fight", 20);
 				Enemy rat = new Rat();
-				startBattle(rat);
+				combatManager.startBattle(rat);
 				break;
 				
 				
@@ -316,7 +320,7 @@ public class MainGame
 	}
 	
 
-	}
+	
 	
 	
 	private void investigateDrawer()
@@ -331,7 +335,7 @@ public class MainGame
 			case "1":
 				TextUtils.slowPrint("A Rat jumps out and attacks you!", 15);
 				Enemy rat = new Rat();
-				startBattle(rat);
+				combatManager.startBattle(rat);
 				break;
 			
 			case "2":
@@ -396,7 +400,7 @@ public class MainGame
 		TextUtils.slowPrint("An ogre attacks you", 20);
 		TextUtils.slowPrint("You draw your weapon and take a fighting stance", 15);
 		Enemy ogre = new Ogre();
-		startBattle(ogre);
+		combatManager.startBattle(ogre);
 		
 	
 		

@@ -1,4 +1,6 @@
 package game;
+
+import util.TextUtils;
 /**
  * Lead Author(s):
  * @Matthew Chang
@@ -21,36 +23,44 @@ package game;
  */
 /**
  */
-import util.TextUtils;
 
-public class Ogre extends Enemy
-//is-a enemy
+public class Warrior extends game.Enemy
 {
-	public Ogre()
+	private int turn = 1;
+	private boolean charged;
+	
+	public Warrior()
 	{
-		super("Ogre", 80, 25);
+		super("Warrior", 90, 15);
+		
 	}
 	
-	private int rage = 0;
-	private int turn = 1;
-
+	
 	@Override
 	public void takeTurn(Player player)
 	{
 		if (turn == 1)
 		{
-			TextUtils.slowPrint("The ogre slowly walks up to you while readying itself", 20 );
-			rage += 2;
+			TextUtils.slowPrint("The " + getName() + "'s aura is devestating your mind.", 20);
+			
 		}
 		else
 		{
-			int damage = getAttack() + rage;
-			TextUtils.slowPrint("The ogre angrily swings at you", 20 );
-			player.takeDamage(damage);
-			
-			TextUtils.slowPrint("The ogre's face reddens", 20 );
-			
+			if (charged)
+			{
+				TextUtils.slowPrint("The " + getName() + " cleaves you in two!!!", 20 );
+				player.takeDamage(50);
+				charged = false;
+				
+			}
+			else
+			{
+				charged = true;
+				TextUtils.slowPrint("The " + getName() + "'s aura flares up", 30);
+			}
 		}
-			
+		
+		
+		turn += 1;
 	}
 }

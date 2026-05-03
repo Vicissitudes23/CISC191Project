@@ -13,6 +13,10 @@ package game;
  * Retrieved from https://open.umn.edu/opentextbooks/textbooks/java-java-java-object-oriented-problem-solving
  * 
  * <<add more references here>>
+ * Oracle. (n.d.). Runnable (Java Platform SE 8 ). Oracle.
+ * Retrieved April 25, 2026, from https://docs.oracle.com/javase/8/docs/api/java/lang/Runnable.html
+ * I came across information on runnable while doing research on thread functionality on the same website
+ * 
  *  
  * Version/date: 
  * 

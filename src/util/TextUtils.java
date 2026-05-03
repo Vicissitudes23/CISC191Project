@@ -13,6 +13,9 @@ package util;
  * Retrieved from https://open.umn.edu/opentextbooks/textbooks/java-java-java-object-oriented-problem-solving
  * 
  * <<add more references here>>
+ * Oracle. (n.d.). Thread (Java Platform SE 8 ). Oracle.
+ * Retrieved April 22, 2026, from https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html
+ * got the idea from observing unit test from file IO module
  *  
  * Version/date: 
  * 

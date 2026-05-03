@@ -1,4 +1,6 @@
 package game;
+
+import util.TextUtils;
 /**
  * Lead Author(s):
  * @Matthew Chang
@@ -22,19 +24,24 @@ package game;
 /**
  */
 
-public abstract class Enemy extends BaseCharacter
-//is-a basecharacter
+public class Wolf extends Enemy
 {
-
-	public Enemy(String name, int health, int attack)
+	
+	public Wolf()
 	{
-		super(name, health, attack);
-		// TODO Auto-generated constructor stub
+		super("Wolf", 35, 10);
 	}
 	
-	public abstract void takeTurn(Player player);
+	
+	@Override
+	public void takeTurn(Player player)
+	{
+		
+		TextUtils.slowPrint("The Wolf bites you and drains your health!", 20 );
+		
+		
 
-
-
-
+		player.takeDamage(getAttack());
+		TextUtils.slowPrint("The wolf has gained " + 10 + " health", 20);
+	}
 }

@@ -28,7 +28,7 @@ public class BaseCharacter
 	private String name;//has-a
 	private int health;//has-a
 	private int attack;//has-a
-	private boolean Blocking;
+	private boolean blocking;
 
 		
 	public BaseCharacter(String name, int health, int attack) //sets character stats
@@ -40,7 +40,7 @@ public class BaseCharacter
 		
 	public void takeDamage(int damage)
 	{
-		if (Blocking == true)//when blocking damage is reduced by 25%
+		if (blocking == true)//when blocking damage is reduced by 25%
 		{
 			int reducedDamage = damage - (int)(damage *0.25);
 			health -= reducedDamage;
@@ -56,7 +56,8 @@ public class BaseCharacter
 			System.out.println(name + " took " + damage + " damage!");
 		}
 			
-		System.out.println(name + " has "+ health + " remaining");
+		System.out.println(name + " has "+ health + " health remaining");
+
 		
 	}
 
@@ -75,7 +76,15 @@ public class BaseCharacter
 	{
 		return name;
 	}
-		
+	
+	public boolean isAlive()
+	{
+		if (health > 0)
+		{
+			return true;
+		}
+		return false;
+	}
 		
 		
 	//Setters
@@ -116,12 +125,12 @@ public class BaseCharacter
 	
 	public void startBlock()//Blocking
 	{
-		Blocking = true;
+		blocking = true;
 	}
 	
 	public void endBlock()
 	{
-		Blocking = false;
+		blocking = false;
 	}
 		
 		

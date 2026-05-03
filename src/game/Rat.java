@@ -36,12 +36,16 @@ public class Rat extends Enemy
 	{
 		
 		TextUtils.slowPrint("The Rat bites you, and it really hurts", 20 );
+		player.takeDamage(getAttack());
 		bites += 1;
 		
-
-		player.takeDamage(getAttack());
-		TextUtils.slowPrint("Your previous wounds hurt so much...", 20 );
-		player.takeDamage(bites*4);
+		if (turn != 1)
+		{
+			
+			TextUtils.slowPrint("Your previous wounds hurt so much...", 20 );//player takes extra damage every turn
+			player.takeDamage(bites*4);
+		}
+		turn += 1;
 	}
 }
 

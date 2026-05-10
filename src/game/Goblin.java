@@ -36,7 +36,7 @@ public class Goblin extends Enemy
 	public void takeTurn(Player player)
 	{
 		
-		TextUtils.slowPrint("The goblin strikes you!", 20 );
+		TextUtils.print("The goblin strikes you!" );
 
 		player.takeDamage(getAttack());
 	}

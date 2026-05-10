@@ -41,14 +41,14 @@ public class Warrior extends game.Enemy
 	{
 		if (turn == 1)
 		{
-			TextUtils.slowPrint("The " + getName() + "'s aura is devestating your mind.", 20);
+			TextUtils.print("The " + getName() + "'s aura is devestating your mind.");
 			
 		}
 		else
 		{
 			if (charged)
 			{
-				TextUtils.slowPrint("The " + getName() + " cleaves you in two!!!", 20 );
+				TextUtils.print("The " + getName() + " cleaves you in two!!!");
 				player.takeDamage(50);
 				charged = false;
 				
@@ -56,7 +56,7 @@ public class Warrior extends game.Enemy
 			else
 			{
 				charged = true;
-				TextUtils.slowPrint("The " + getName() + "'s aura flares up", 30);
+				TextUtils.print("The " + getName() + "'s aura flares up");
 			}
 		}
 		

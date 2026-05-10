@@ -35,10 +35,10 @@ import util.TextUtils;
 public class MainGame
 {
 
-	private Scanner sc = new Scanner(System.in);
-	private Player player;// player variable
+	private Player player;//has-a
 	private List<Occurrence> possibleOccurrences = new ArrayList<>(); //has-many Occurrences stores all possible occurrences that can be randomly selected
-	private int occurrenceCount = 0; //number of events or things have happened
+	private int occurrenceCount = 0;//has-a number of events or things have happened
+	private GameWindow gameWindow = new GameWindow();//has-a 
 	
 	private CombatManager combatManager;
 
@@ -57,10 +57,10 @@ public class MainGame
 	
 	public void start()
 	{
-		System.out.println("Hello! Welcome!");
+		TextUtils.print("Hello! Welcome!");
 
 
-		player = new Player("You!", 100, 20);
+		player = new Player("You", 100, 20);
 
 		mainMenu();// opens main menu
 
@@ -68,85 +68,78 @@ public class MainGame
 
 	public void mainMenu()
 	{
-		while (true)
+		String[] labels = {"Play", "Stats", "Load", "Quit"};
+		Runnable[] actions = new Runnable[4];
+
+		TextUtils.print("\n=== Main Menu ===");
+		TextUtils.print("1. Start New Journey");
+		TextUtils.print("2. View Stats");
+		TextUtils.print("3. Load Save");
+		TextUtils.print("4. Quit");
+		TextUtils.print("Select 1-4");
+			
+		actions[0] = () ->
 		{
-			System.out.println("\n=== Main Menu ===");
-			System.out.println("1. Start New Journey");
-			System.out.println("2. View Stats");
-			System.out.println("3. Load Save");
-			System.out.println("4. Quit");
-			System.out.println("Select 1-4");
+			combatManager = new CombatManager(player, this);
+			TextUtils.print("\nYour journey begins...");
+			startJourney();
+		};
+		actions[1] = () ->
+		{
+			player.showStats();
+		};
+		actions[2] = () ->
+		{
+			loadGame();
+			startJourney();
+		};
+		actions[3] = () ->
+		{
+			//quit
+			System.exit(0);
+		};
+		
+		gameWindow.setButtonActions(labels, actions);
 
-			String choice = sc.nextLine();
-
-			switch (choice)
-			{
-				case "1":
-					
-					combatManager = new CombatManager(player, this);
-					System.out.print("Enter your player name: ");
-					String name = sc.nextLine();
-					player.setName(name);
-					System.out.println("\nYour journey begins...");
-					startJourney();
-					break;
-
-				case "2":
-					player.showStats();
-					break;
-				
-				case "3":
-					loadGame();
-					startJourney();
-
-					break;
-
-				case "4":
-				{
-					System.out.println("Goodbye!");
-
-					return;
-				}
-				default:
-					System.out.println("Invalid Choice");
-			}
-
-		}
+		
 	}
 	
 	
 
 	
-	private void startJourney()
+	public void startJourney()
 	{
-		boolean traveling = true;
-
-		while (traveling)
+		
+		String[] labels = {"continue", "Save and Quit"};
+		Runnable[] actions = new Runnable[4];
+		TextUtils.print("\n=== Journey Event ===");
+		TextUtils.print("1. Continue traveling 2. Save and return to main menu");
+		
+		actions[0] = ()-> 
 		{
-			System.out.println("\n=== Journey Event ===");
-			System.out.println("1. Continue traveling 2. Save and return to main menu");
-			
-			String choice = sc.nextLine();
-			
-			switch (choice)
-			{
-				case "1":
-					triggerRandomOccurrence();
-					break;
-				case "2":
-					traveling = false;
-					saveGame();
-					break;
-					
-				default:
-					System.out.println("Invalid Choice");
-			}
+			//continue traveling
+			TextUtils.print("You continue your journey...");
+			triggerRandomOccurrence();
 			
 			
-		}
+			
+		};
+		
+		actions[1] = () ->
+		{
+			saveGame();
+			TextUtils.print("Game Saved");
+			mainMenu();
+		};
+		
+		gameWindow.setButtonActions(labels, actions);
+		
 	}
-	
 
+	public GameWindow getGameWindow()
+	{
+		return this.gameWindow ;
+	}
 	
 
 
@@ -209,14 +202,14 @@ public class MainGame
 		{
 			if (occurrenceCount != 0)
 			{
-				TextUtils.slowPrint("It has been "+ occurrenceCount + " days since you began this journey", 20);
-				TextUtils.slowPrint("You spent 25 gold to stay at an inn overnight", 30);
-				TextUtils.slowPrint("You feel well rested and a little bit stronger", 20);
+				TextUtils.print("It has been "+ occurrenceCount + " days since you began this journey");
+				TextUtils.print("You spent 25 gold to stay at an inn overnight");
+				TextUtils.print("You feel well rested and a little bit stronger");
 				player.increaseAttack(2);
 				player.heal(10);
 				
 				player.changeCurrency(-25);
-				TextUtils.slowPrint("\n The Journey Continues...", 30);
+				TextUtils.print("\n The Journey Continues...");
 			}
 							
 
@@ -225,8 +218,8 @@ public class MainGame
 			int index = (int)(Math.random() * possibleOccurrences.size());
 			
 			Occurrence event = possibleOccurrences.get(index);
-			TextUtils.slowPrint("\nEvent: " + event.getName(), 15);
-			TextUtils.slowPrint(event.getDescription(), 20);
+			TextUtils.print("\nEvent: " + event.getName());
+			TextUtils.print(event.getDescription());
 			
 			event.trigger();
 			occurrenceCount += 1;
@@ -234,8 +227,8 @@ public class MainGame
 		else
 		{
 			
-			TextUtils.slowPrint("You have run out of funds... you cannot continue...", 25);
-			TextUtils.slowPrint("The journey has come to an abrupt end...", 35);
+			TextUtils.print("You have run out of funds... you cannot continue...");
+			TextUtils.print("The journey has come to an abrupt end...");
 			mainMenu();
 		}
 		
@@ -243,38 +236,38 @@ public class MainGame
 	
 	private void warriorEvent()
 	{
-		TextUtils.slowPrint("Choose 1. Fight them, 2. Talk to them, 3. Ignore them", 20);
 		
-
-		String choice = sc.nextLine();
+		String[] labels = {"Fight", "Talk", "Ignore"};
+		Runnable[] actions = new Runnable[4];
+		TextUtils.print("Choose 1. Fight them, 2. Talk to them, 3. Ignore them");
 		
-		switch (choice)
+		
+		
+		
+		actions[0] = () ->
 		{
-			case "1":
-				TextUtils.slowPrint("You draw your weapon and take a fighting stance", 15);
-				Enemy warrior = new Warrior();
-				combatManager.startBattle(warrior);
-				break;
-			
-			case "2":
-				TextUtils.slowPrint("You decide to say a few words.", 15);
-				TextUtils.slowPrint("Greetings fellow traveler. Take this potion and stay safe.", 20);
-				player.addItem("Potion");
-				TextUtils.slowPrint("You obtained a potion!", 15);
-				break;
-				
-			case "3":
-				TextUtils.slowPrint("You walk past the warrior, and glance back over your shoulder... He is glaring at you.", 15);
-				TextUtils.slowPrint("You start running away and trip...", 20);
-				TextUtils.slowPrint("You lost 30 gold...", 15);
-				player.changeCurrency(-30);
-				
-				
-				
-				break;
-			default:
-				System.out.println("Invalid Choice");
-		}
+			TextUtils.print("You draw your weapon and take a fighting stance");
+			Enemy warrior = new Warrior();
+			combatManager.startBattle(warrior);
+		};
+		actions[1] = () ->
+		{
+			TextUtils.print("You decide to say a few words.");
+			TextUtils.print("Greetings fellow traveler. Take this potion and stay safe.");
+			player.addItem("Potion");
+			TextUtils.print("You obtained a potion!");
+			startJourney();
+		};
+		
+		actions[2] = () ->
+		{
+			TextUtils.print("You walk past the warrior, and glance back over your shoulder... He is glaring at you.");
+			TextUtils.print("You start running away and trip...");
+			player.changeCurrency(-30);
+			startJourney();
+		};
+
+		gameWindow.setButtonActions(labels, actions);
 
 		
 	}
@@ -282,41 +275,50 @@ public class MainGame
 	
 	private void wolfAttack()
 	{
-		TextUtils.slowPrint("You ready yourself for a fight", 15);
+		TextUtils.print("You ready yourself for a fight");
 		Enemy wolf = new Wolf();
 		combatManager.startBattle(wolf);
 	}
 	
 	
 	private void ratQuest()
-	{
-		TextUtils.slowPrint("Choose 1. Eat the cheese, 2. hit the cheese", 20);
+	{	
+		
+		String[] labels = {"Eat", "Hit"};
+		Runnable[] actions = new Runnable[4];
+		TextUtils.print("Choose 1. Eat the cheese, 2. hit the cheese");
+		
+		actions[0] = () ->
+		{
+			TextUtils.print("You eat the cheese.");
+			player.heal(10);
+			player.increaseAttack(2);
+			TextUtils.print("You heal 10 health.");
+			TextUtils.print("You gain 2 attack.");
+			startJourney();
+		};
+		actions[1] = () ->
+		{
+			TextUtils.print("An offended rat comes up to you and attacks!");
+			TextUtils.print("You ready yourself for a fight");
+			Enemy rat = new Rat();
+			combatManager.startBattle(rat);
+				
+		};
+		
+		actions[2] = () ->
+		{
+			TextUtils.print("You walk past the warrior, and glance back over your shoulder... He is glaring at you.");
+			TextUtils.print("You start running away and trip...");
+			player.changeCurrency(-30);
+			startJourney();
+		};
+
+		gameWindow.setButtonActions(labels, actions);
+		
 		
 
-		String choice = sc.nextLine();
-		
-		switch (choice)
-		{
-			case "1":
-				TextUtils.slowPrint("You eat the cheese.", 15);
-				player.heal(10);
-				player.increaseAttack(2);
-				TextUtils.slowPrint("You heal 10 health.", 25);
-				TextUtils.slowPrint("You gain 2 attack.", 25);
-				break;
-			
-			case "2":
-				
-				TextUtils.slowPrint("An offended rat comes up to you and attacks!", 15);
-				TextUtils.slowPrint("You ready yourself for a fight", 20);
-				Enemy rat = new Rat();
-				combatManager.startBattle(rat);
-				break;
-				
-				
-			default:
-				System.out.println("Invalid Choice");	
-		}
+
 	}
 	
 
@@ -325,80 +327,86 @@ public class MainGame
 	
 	private void investigateDrawer()
 	{
-		TextUtils.slowPrint("Choose 1. Check the bottom drawer, 2. Check the top drawer", 20);
+		String[] labels = {"Bottom", "Top"};
+		Runnable[] actions = new Runnable[4];
+		TextUtils.print("Choose 1. Check the bottom drawer, 2. Check the top drawer");
 		
-
-		String choice = sc.nextLine();
-		
-		switch (choice)
+		actions[0] = () ->
 		{
-			case "1":
-				TextUtils.slowPrint("A Rat jumps out and attacks you!", 15);
-				Enemy rat = new Rat();
-				combatManager.startBattle(rat);
-				break;
-			
-			case "2":
-				TextUtils.slowPrint("You search the drawer", 15);
-				TextUtils.slowPrint("The drawer has a nice looking bomb inside.", 20);
-				player.addItem("Bomb");
-				TextUtils.slowPrint("You obtained a bomb!", 15);
-				break;
-				
-				
-			default:
-				System.out.println("Invalid Choice");
-		}
-
+			TextUtils.print("A Rat jumps out and attacks you!");
+			Enemy rat = new Rat();
+			combatManager.startBattle(rat);	
+		};
+		actions[1] = () ->
+		{
+			TextUtils.print("You search the drawer");
+			TextUtils.print("The drawer has a nice looking bomb inside.");
+			player.addItem("Bomb");
+			TextUtils.print("You obtained a bomb!");
+			startJourney();
+		};
 		
+
+		gameWindow.setButtonActions(labels, actions);
+
 	}
 	
 	private void goblinEvent()
 	{
-		TextUtils.slowPrint("1. Attack it, 2. Talk to it, 3. Run away from it", 20);
+		String[] labels = {"Attack", "Talk", "Run"};
+		Runnable[] actions = new Runnable[4];
+		TextUtils.print("1. Attack it, 2. Talk to it, 3. Run away from it");
 		
-		String choice = sc.nextLine();
-		switch (choice)
+		
+		
+		
+		actions[0] = () ->
 		{
-			case "1":
-				TextUtils.slowPrint("You strike at the goblin with your weapon!", 15);
-				TextUtils.slowPrint("The goblin is knocked out...", 20);
-				TextUtils.slowPrint("Turns out the goblin was just trying to ask for directions...", 25);
-				TextUtils.slowPrint("You decide to take its money", 15);
-				player.changeCurrency(5);
-				//gain gold
-				break;
-			case "2":
-				TextUtils.slowPrint("You ask what the goblin wants", 15);
-				TextUtils.slowPrint("Goblin: WHERE IS THE NEAREST TOWN!!!!???", 25);
-				TextUtils.slowPrint("After pointing the goblin towards the nearest town, it thanks you for your kindness.", 15);
-				player.addItem("Bomb");
-				TextUtils.slowPrint("You have obtained a bomb!", 20);
-				break;
-			case "3":
-				TextUtils.slowPrint("You run like the goblin is trying to kill you.", 15);
-				TextUtils.slowPrint("You hear the goblin yelling at you...",15);
-				TextUtils.slowPrint("Goblin: WAIT!!!!!!! I JUST NEED HELP!!!!!", 30);
-				TextUtils.slowPrint("You feel a little bad for the goblin but you keep running anyways", 20);
-				break;
-			default:
-				System.out.println("Invalid Choice");
-		}
+			TextUtils.print("You strike at the goblin with your weapon!");
+			TextUtils.print("The goblin is knocked out...");
+			TextUtils.print("Turns out the goblin was just trying to ask for directions...");
+			TextUtils.print("You decide to take its money");
+			player.changeCurrency(5);
+			//gain gold
+			startJourney();
+		};
+		actions[1] = () ->
+		{
+			TextUtils.print("You ask what the goblin wants");
+			TextUtils.print("Goblin: WHERE IS THE NEAREST TOWN!!!!???");
+			TextUtils.print("After pointing the goblin towards the nearest town, it thanks you for your kindness.");
+			player.addItem("Bomb");
+			TextUtils.print("You have obtained a bomb!");
+			startJourney();
+		};
+		
+		actions[2] = () ->
+		{
+			TextUtils.print("You run like the goblin is trying to kill you.");
+			TextUtils.print("You hear the goblin yelling at you...");
+			TextUtils.print("Goblin: WAIT!!!!!!! I JUST NEED HELP!!!!!");
+			TextUtils.print("You feel a little bad for the goblin but you keep running anyways");
+			startJourney();
+		};
+
+		gameWindow.setButtonActions(labels, actions);
 		
 	}
 	
+	
 	private void robberyEvent()
 	{
-		TextUtils.slowPrint("You have been robbed by a goblin...", 25);
-		TextUtils.slowPrint("You lost 20 gold but managed to take its dagger as it ran away", 25);
-		player.changeCurrency(-20);
+		TextUtils.print("You have been robbed by a goblin...");
+		TextUtils.print("You lost  gold but managed to take its dagger as it ran away");
+		player.changeCurrency(-25);
 		player.addItem("Knife");
+		startJourney();
 	}
 	
 	private void ogreBlocking()
 	{
-		TextUtils.slowPrint("An ogre attacks you", 20);
-		TextUtils.slowPrint("You draw your weapon and take a fighting stance", 15);
+		TextUtils.print("An ogre attacks you");
+		TextUtils.print("You draw your weapon and take a fighting stance" );
 		Enemy ogre = new Ogre();
 		combatManager.startBattle(ogre);
 		

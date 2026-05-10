@@ -32,7 +32,7 @@ public class Player extends BaseCharacter
 //is-a basecharacter
 {
 	private int currency;//has-a
-	private String[] inventory = new String[10];//has-many item identifiers uses hashmap
+	private String[] inventory = new String[3];//has-many item identifiers uses hashmap
 	private Map<String, Item> itemDatabase = new HashMap<>();//has-many possible items
 	
 	public Player(String name, int health, int attack)
@@ -63,14 +63,14 @@ public class Player extends BaseCharacter
 	{
 		if (amount < 0)
 		{
-			TextUtils.slowPrint("You have lost " + Math.abs(amount) + " gold...", 30);
+			TextUtils.print("You have lost " + Math.abs(amount) + " gold...");
 		}
 		else
 		{
-			TextUtils.slowPrint("You have gained " + amount + " gold!", 30);
+			TextUtils.print("You have gained " + amount + " gold!");
 		}
 		this.currency += amount;
-		TextUtils.slowPrint("You now have " + this.currency + " gold", 30);
+		TextUtils.print("You now have " + this.currency + " gold");
 	}
 	
 	public boolean addItem(String string) 
@@ -86,10 +86,10 @@ public class Player extends BaseCharacter
 	
 	public void showInventory() 
 	{
-	    System.out.println("\n=== Inventory ===");
+		TextUtils.print("\n=== Inventory ===");
 
 	    for (int i = 0; i < inventory.length; i++) {
-	        System.out.println((i + 1) + ": " +
+	    	TextUtils.print((i + 1) + ": " +
 	            (inventory[i] == null ? "[Empty]" : inventory[i]));
 	    }
 	}
@@ -110,7 +110,7 @@ public class Player extends BaseCharacter
 	    Item item = itemDatabase.get(itemName);
 
 	    if (item == null) {
-	        System.out.println("Unknown item.");
+	    	TextUtils.print("Unknown item.");
 	        return;
 	    }
 
@@ -118,23 +118,23 @@ public class Player extends BaseCharacter
 
 	        case "Potion":
 	            heal(item.getPower());
-	            TextUtils.slowPrint(
-	                "You recover " + item.getPower() + " HP!", 25
+	            TextUtils.print(
+	                "You recover " + item.getPower() + " HP!"
 	            );
 	            break;
 
 	        case "Bomb":
 	            enemy.takeDamage(item.getPower());
-	            TextUtils.slowPrint(
-	                "The bomb explodes for " + item.getPower() + " damage!", 25
+	            TextUtils.print(
+	                "The bomb explodes for " + item.getPower() + " damage!"
 	            );
 	            break;
 
 	        case "Knife":
 	            enemy.takeDamage(item.getPower());
-	            TextUtils.slowPrint(
+	            TextUtils.print(
 	                "The knife pierces through the enemy entirely, dealing "
-	                + item.getPower() + " damage!", 25
+	                + item.getPower() + " damage!"
 	            );
 	            break;
 	    }

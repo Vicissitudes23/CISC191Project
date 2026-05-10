@@ -26,31 +26,34 @@ import util.TextUtils;
 public class Ogre extends Enemy
 //is-a enemy
 {
+	private int rage = 0;//has-a
+	private int turn = 1;//has-a
+	
 	public Ogre()
 	{
 		super("Ogre", 80, 25);
 	}
 	
-	private int rage = 0;
-	private int turn = 1;
+
 
 	@Override
 	public void takeTurn(Player player)
 	{
 		if (turn == 1)
 		{
-			TextUtils.slowPrint("The ogre slowly walks up to you while readying itself", 20 );
+			TextUtils.print("The ogre slowly walks up to you while readying itself");
 			rage += 2;
 		}
-		else
+		else 
 		{
 			int damage = getAttack() + rage;
-			TextUtils.slowPrint("The ogre angrily swings at you", 20 );
+			TextUtils.print("The ogre angrily swings at you" );
 			player.takeDamage(damage);
 			
-			TextUtils.slowPrint("The ogre's face reddens", 20 );
-			
+			TextUtils.print("The ogre's face reddens");
+			this.increaseAttack(5);
 		}
+		turn += 1;
 			
 	}
 }

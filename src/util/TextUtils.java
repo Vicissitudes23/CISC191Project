@@ -1,4 +1,7 @@
 package util;
+
+import game.GameWindow;
+
 /**
  * Lead Author(s):
  * @Matthew Chang
@@ -16,6 +19,7 @@ package util;
  * Oracle. (n.d.). Thread (Java Platform SE 8 ). Oracle.
  * Retrieved April 22, 2026, from https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html
  * got the idea from observing unit test from file IO module
+ * 
  *  
  * Version/date: 
  * 
@@ -26,22 +30,21 @@ package util;
  */
 public class TextUtils
 {
-	public static void slowPrint(String text, int duration)
+	private static GameWindow gameWindow;//has-a
+	public static void print(String text)//wanted to slow down the printed text to give the player time to read what is happening because println will instantly print everything all at once
+	{	
+		//ended up removing the thread part because it was too hard to work around for the GUI
+		
+		gameWindow.print(text);//sends print to gameWindow which prints to GUI
+
+		gameWindow.newLine();
+	}
+	
+
+	
+	public static void setWindow(GameWindow window)
 	{
-		for (int i = 0; i <text.length(); i++)
-		{
-			System.out.print(text.charAt(i));
-			try
-			{
-				Thread.sleep(duration);
-			}
-			catch (InterruptedException e)
-			{
-				Thread.currentThread().interrupt();
-			}
-			
-		}
-		System.out.println();
+		gameWindow = window;
 	}
 
 }

@@ -37,11 +37,11 @@ public class Wolf extends Enemy
 	public void takeTurn(Player player)
 	{
 		
-		TextUtils.slowPrint("The Wolf bites you and drains your health!", 20 );
+		TextUtils.print("The Wolf bites you and drains your health!");
 		
 		
 
 		player.takeDamage(getAttack());
-		TextUtils.slowPrint("The wolf has gained " + 10 + " health", 20);
+		TextUtils.print("The wolf has gained " + 10 + " health");
 	}
 }

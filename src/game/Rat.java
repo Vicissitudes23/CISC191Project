@@ -25,24 +25,25 @@ import util.TextUtils;
  */
 public class Rat extends Enemy
 {
+	private int turn = 1;//has-a
+	private int bites;//has-a
 	public Rat()
 	{
 		super("Rat", 90, 2);
 	}
-	private int turn = 1;
-	private int bites;
+
 	@Override
 	public void takeTurn(Player player)
 	{
 		
-		TextUtils.slowPrint("The Rat bites you, and it really hurts", 20 );
+		TextUtils.print("The Rat bites you, and it really hurts" );
 		player.takeDamage(getAttack());
 		bites += 1;
 		
 		if (turn != 1)
 		{
 			
-			TextUtils.slowPrint("Your previous wounds hurt so much...", 20 );//player takes extra damage every turn
+			TextUtils.print("Your previous wounds hurt so much..." );//player takes extra damage every turn
 			player.takeDamage(bites*4);
 		}
 		turn += 1;

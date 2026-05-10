@@ -31,7 +31,7 @@ public class CombatManager
 {
 	private MainGame game;//has-a
 	private Player player;//has-a
-	private Scanner sc = new Scanner(System.in);
+
 	
 	
 	public CombatManager(Player playerCharacter, MainGame mainGame)
@@ -43,108 +43,123 @@ public class CombatManager
 	
 	public void startBattle(Enemy enemy) 
 	{
-		TextUtils.slowPrint("The " + enemy.getName() + " readies itself for a fight!", 30);
-
-	    while (player.getHealth() > 0 && enemy.isAlive()) {
-
-	        boolean turnUsed = false;
-
-	        // Player can keep acting until they use a turn
-	        while (!turnUsed) {
-	            turnUsed = playerTurn(enemy);
-	            if (!enemy.isAlive()) {
-	            	TextUtils.slowPrint("You defeated the " + enemy.getName() + "!", 30);
-	                return;
-	            }
-	        }
-
-	        // Enemy turn only happens if player used a turn
-	        if (enemyTurn(enemy)) {
-	        	TextUtils.slowPrint("You were defeated...", 30);
-	            game.mainMenu();
-	        }
-	    }
+		TextUtils.print("The " + enemy.getName() + " readies itself for a fight!");
+		playerTurn(enemy);
 	}
-	private boolean playerTurn(Enemy enemy)
+	
+	public boolean checkEndCombat(Enemy enemy)
 	{
+		if (player.isAlive() && enemy.isAlive())
+		{
+			return false;
+		}
+		endBattle(enemy);
+		return true;
+	}
+	
+	public void endBattle(Enemy enemy)
+	{
+		if (player.isAlive())
+		{
+			TextUtils.print("You defeated the " + enemy.getName() + "!");
+			game.startJourney();
+		}
+		else
+		{
+			TextUtils.print("You were defeated...");
+			game.mainMenu();
+		}
+
+	        	
+	}
+	private void playerTurn(Enemy enemy)
+	{
+		//reset block at the start of each turn
 		player.endBlock();
 		
-		TextUtils.slowPrint("\n=== PLAYER TURN=== ", 20);
-		TextUtils.slowPrint("1. Attack, 2. Guard, 3. Use Item, 4. Status", 15);
+		TextUtils.print("\n=== PLAYER TURN=== ");
+		TextUtils.print("1. Attack, 2. Guard, 3. Use Item, 4. Status");
 		
-		String choice = sc.nextLine();
+		String[] labels = {"Attack", "Guard", "Items", "Status"};
+		Runnable[] actions = new Runnable[4];
+
 		
-		switch (choice)
+		
+		
+		//player attacks
+		actions[0] = () ->
 		{
-			case "1" ://player attacks
-				int damage = player.getAttack();
-				TextUtils.slowPrint("Your attack hits, dealing " + damage + " damage!", 15);
-				enemy.takeDamage(damage);
+			int damage = player.getAttack();
+			TextUtils.print("Your attack hits, dealing " + damage + " damage!");
+			enemy.takeDamage(damage);
+			checkEndCombat(enemy);
+			enemyTurn(enemy);
+		};
+		//player defends
+		actions[1] = () ->
+		{
+			TextUtils.print("You brace yourself for an incoming attack!");
+			player.startBlock();
+			enemyTurn(enemy);
+		};
+		//player checks bag
+		actions[2] = () ->
+		{
+			 player.showInventory();
+			 String[] inventory = player.getInventory();
+			 String[] itemLabels = new String[inventory.length + 1];
+			 Runnable[] itemActions = new Runnable[itemLabels.length];
 
-				
-				
-				return true;
-				
-			case "2"://player blocks
-				TextUtils.slowPrint("You brace yourself for an incoming attack!", 10);
-				player.startBlock();
+			 for (int i = 0; i < inventory.length; i++) 
+			 {
+				 String itemName = inventory[i];
+				 itemLabels[i] = (itemName != null) ? itemName : "Empty Slot";
+				 int index = i;
+				 itemActions[i] = () -> 
+				 {
+					 if (inventory[index] != null) 
+					 {
+						 player.useItem(inventory[index], enemy, index);
+						 checkEndCombat(enemy);
+						 enemyTurn(enemy);
+					 } 
+					 else 
+					 {
+						 TextUtils.print("That slot is empty.");
+						 playerTurn(enemy); // re-open player turn
+					 }
+				 };      
+			 } 
+			 itemLabels[3] = "Cancel";
+			 itemActions[3] = () -> playerTurn(enemy);
+			 game.getGameWindow().setButtonActions(itemLabels, itemActions);
+			 
+		};
+		//player checks status
+		actions[3] = () ->
+		{
+			player.showStats();
+				playerTurn(enemy);
+		};
 
-				return true;
-				
-			case "3"://player opens bag
-			    player.showInventory();
-			    TextUtils.slowPrint("Select an item number or 0 to cancel:", 15);
-
-			    int index;
-			    try {
-			        index = Integer.parseInt(sc.nextLine()) - 1;
-			    } catch (NumberFormatException e) {
-			        TextUtils.slowPrint("Invalid input.", 20);
-			        return false;
-			    }
-
-			    // Cancel
-			    if (index == -1) {
-			        TextUtils.slowPrint("Cancelled.", 15);
-			        return false;
-			    }
-
-			    // Out of bounds
-			    if (index < 0 || index >= player.getInventory().length) {
-			        TextUtils.slowPrint("Invalid slot.", 20);
-			        return false;
-			    }
-
-			    String itemName = player.getInventory()[index];
-
-			    if (itemName == null) {
-			        TextUtils.slowPrint("That slot is empty.", 15);
-			        return false;
-			    }
-
-			    // Use item (consumes turn)
-			    player.useItem(itemName, enemy, index);
-			    return true;
-
-				
-			case "4"://player wants to see their status
-				player.showStats();
-				return false;
-		}
 		
-		return false;//enemy still alive
+		game.getGameWindow().setButtonActions(labels, actions);
+		
 	
 	}
 	
 	
-	private boolean enemyTurn(Enemy enemy)
+	private void enemyTurn(Enemy enemy)
 	{
-		System.out.println("\n=== Opposing " + enemy.getName() + "'s turn ===");
+		TextUtils.print("\n=== Opposing " + enemy.getName() + "'s turn ===");
 
 		//enemy takes their turn, behavior will change based on their class
 		enemy.takeTurn(player);
+		if (checkEndCombat(enemy)== false) 
+		{
+			playerTurn(enemy);
+		}
 		
-		return player.getHealth() <=0; //true if player is dead
 	}
 	
 	

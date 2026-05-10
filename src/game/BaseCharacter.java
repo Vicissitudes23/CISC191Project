@@ -1,4 +1,7 @@
 package game;
+
+import util.TextUtils;
+
 /**
  * Lead Author(s):
  * @Matthew Chang
@@ -28,7 +31,7 @@ public class BaseCharacter
 	private String name;//has-a
 	private int health;//has-a
 	private int attack;//has-a
-	private boolean blocking;
+	private boolean blocking;//has-a
 
 		
 	public BaseCharacter(String name, int health, int attack) //sets character stats
@@ -45,18 +48,18 @@ public class BaseCharacter
 			int reducedDamage = damage - (int)(damage *0.25);
 			health -= reducedDamage;
 			if (health < 0) health = 0; //if the attack did not defeat the character
-			System.out.println(name + " blocked the attack, reducing the damage of the blow."); 
-			System.out.println(name + " took " + reducedDamage + " damage!");
+			TextUtils.print(name + " blocked the attack, reducing the damage of the blow."); 
+			TextUtils.print(name + " took " + reducedDamage + " damage!");
 			
 		}
 		else
 		{
 			health -= damage; //damage is normal when not blocking
 			if (health < 0) health = 0; //if the attack did not defeat the character
-			System.out.println(name + " took " + damage + " damage!");
+			TextUtils.print(name + " took " + damage + " damage!");
 		}
 			
-		System.out.println(name + " has "+ health + " health remaining");
+		TextUtils.print(name + " has "+ health + " health remaining");
 
 		
 	}
@@ -130,6 +133,11 @@ public class BaseCharacter
 	
 	public void endBlock()
 	{
+		if (blocking == true)
+		{
+			TextUtils.print("You lowered your guard");
+		}
+		
 		blocking = false;
 	}
 		
@@ -137,7 +145,7 @@ public class BaseCharacter
 	//Show Stats
 	public void showStats()
 	{
-		System.out.println("\nCharacter: " + name + " | HP: "+ health + " | attack: " + attack);
+		TextUtils.print("\nCharacter: " + name + " | HP: "+ health + " | attack: " + attack );
 	}
 	
 

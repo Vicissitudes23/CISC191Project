@@ -31,21 +31,22 @@ import util.TextUtils;
 public class Player extends BaseCharacter
 //is-a basecharacter
 {
-	private int currency;//has-a
+	private int currencyAmount;//has-a
+	private MainGame game; //has-a
 	private String[] inventory = new String[3];//has-many item identifiers uses hashmap
-	private Map<String, Item> itemDatabase = new HashMap<>();//has-many possible items
 	
-	public Player(String name, int health, int attack)
+	
+	public Player(String name, int health, int attack, MainGame game)
 	{
 		super(name, health, attack);
-		setupItems();
-		this.currency = 200;
+		this.game = game;
+		this.currencyAmount = 200;
 		
 	}
 	
 	public int getCurrency()
 	{
-		return this.currency;
+		return this.currencyAmount;
 	}
 	
 	public String[] getInventory()
@@ -56,7 +57,7 @@ public class Player extends BaseCharacter
 	
 	public void setCurrency(int amount)
 	{
-		this.currency = amount;
+		this.currencyAmount = amount;
 	}
 	
 	public void changeCurrency(int amount)//adds or subtracts currency
@@ -69,8 +70,8 @@ public class Player extends BaseCharacter
 		{
 			TextUtils.print("You have gained " + amount + " gold!");
 		}
-		this.currency += amount;
-		TextUtils.print("You now have " + this.currency + " gold");
+		this.currencyAmount += amount;
+		TextUtils.print("You now have " + this.currencyAmount + " gold");
 	}
 	
 	public boolean addItem(String string) 
@@ -95,19 +96,12 @@ public class Player extends BaseCharacter
 	}
 
 	
-	private void setupItems()
-	{
-		itemDatabase.put("Potion", new Item("Potion", "Restores 20 HP", 20));
-		itemDatabase.put("Super Potion", new Item("Super Potion", "Restores 20 HP", 20));
-		itemDatabase.put("Bomb", new Item("Bomb", "Deals 30 damage to the enemy", 30));
-		itemDatabase.put("Knife", new Item("Knife", "Deals double your attack value", getAttack() * 2));
-		
-	}
+
 	
 	
 	public void useItem(String itemName, Enemy enemy, int slot) 
 	{
-	    Item item = itemDatabase.get(itemName);
+	    Item item = game.getItem(itemName);
 
 	    if (item == null) {
 	    	TextUtils.print("Unknown item.");
@@ -142,6 +136,8 @@ public class Player extends BaseCharacter
 	    // Consume Item
 	    getInventory()[slot] = null;
 	}
+
+
 	
 	
 

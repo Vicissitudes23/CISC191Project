@@ -31,7 +31,7 @@ public class BaseCharacter
 	private String name;//has-a
 	private int health;//has-a
 	private int attack;//has-a
-	private boolean blocking;//has-a
+	private boolean guarding;//has-a guarding state to take less damage on the next attack
 
 		
 	public BaseCharacter(String name, int health, int attack) //sets character stats
@@ -43,7 +43,7 @@ public class BaseCharacter
 		
 	public void takeDamage(int damage)
 	{
-		if (blocking == true)//when blocking damage is reduced by 25%
+		if (guarding == true)//when blocking damage is reduced by 25%
 		{
 			int reducedDamage = damage - (int)(damage *0.25);
 			health -= reducedDamage;
@@ -119,7 +119,12 @@ public class BaseCharacter
 			this.attack = 0;
 		}
 	}
+	
+	public void setHP(int amount)
+	{
+		this.health = amount;
 		
+	}
 		
 	public void heal(int amount)
 	{
@@ -128,17 +133,17 @@ public class BaseCharacter
 	
 	public void startBlock()//Blocking
 	{
-		blocking = true;
+		guarding = true;
 	}
 	
-	public void endBlock()
+	public void endBlock()//sets blocking to false
 	{
-		if (blocking == true)
+		if (guarding == true)
 		{
 			TextUtils.print("You lowered your guard");
 		}
 		
-		blocking = false;
+		guarding = false;
 	}
 		
 		

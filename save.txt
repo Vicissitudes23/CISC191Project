@@ -1,0 +1,6 @@
+name=You
+health=34
+attack=20
+occurrenceCount=1
+currency=200
+inventory=null,null,null

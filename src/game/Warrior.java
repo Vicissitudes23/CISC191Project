@@ -26,7 +26,7 @@ import util.TextUtils;
 
 public class Warrior extends game.Enemy
 {
-	private int turn = 1;
+	private int turnCount = 1;
 	private boolean charged;
 	
 	public Warrior()
@@ -39,7 +39,7 @@ public class Warrior extends game.Enemy
 	@Override
 	public void takeTurn(Player player)
 	{
-		if (turn == 1)
+		if (turnCount == 1)
 		{
 			TextUtils.print("The " + getName() + "'s aura is devestating your mind.");
 			
@@ -61,6 +61,6 @@ public class Warrior extends game.Enemy
 		}
 		
 		
-		turn += 1;
+		turnCount += 1;
 	}
 }

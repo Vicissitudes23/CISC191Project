@@ -1,5 +1,6 @@
 package util;
 
+
 import game.GameWindow;
 
 /**
@@ -19,6 +20,10 @@ import game.GameWindow;
  * Oracle. (n.d.). Thread (Java Platform SE 8 ). Oracle.
  * Retrieved April 22, 2026, from https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html
  * got the idea from observing unit test from file IO module
+ * the IO module unit test has thread implementation as shown below
+ * // Wait a second
+ * thread.sleep(1000);  // throws InterruptedException
+ * String dateTimeAfter = IO.readDateTime(API_URL);
  * 
  *  
  * Version/date: 

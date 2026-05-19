@@ -27,7 +27,7 @@ public class Ogre extends Enemy
 //is-a enemy
 {
 	private int rage = 0;//has-a
-	private int turn = 1;//has-a
+	private int turnCount = 1;//has-a
 	
 	public Ogre()
 	{
@@ -39,7 +39,7 @@ public class Ogre extends Enemy
 	@Override
 	public void takeTurn(Player player)
 	{
-		if (turn == 1)
+		if (turnCount == 1)
 		{
 			TextUtils.print("The ogre slowly walks up to you while readying itself");
 			rage += 2;
@@ -53,7 +53,7 @@ public class Ogre extends Enemy
 			TextUtils.print("The ogre's face reddens");
 			this.increaseAttack(5);
 		}
-		turn += 1;
+		turnCount += 1;
 			
 	}
 }

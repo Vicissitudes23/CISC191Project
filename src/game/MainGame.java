@@ -1,10 +1,17 @@
 package game;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import java.util.Scanner;
+
+import javax.swing.JOptionPane;
 
 import util.TextUtils;
 
@@ -24,7 +31,14 @@ import util.TextUtils;
  * Retrieved from https://open.umn.edu/opentextbooks/textbooks/java-java-java-object-oriented-problem-solving
  * 
  * <<add more references here>>
- *  
+ * Use of runnable was something I learned from previous discussions with my friend Elijah Jones
+ * Retrieved April 25, 2026, from https://docs.oracle.com/javase/8/docs/api/java/lang/Runnable.html
+ * I came across information on runnable while doing research on thread functionality on the same website
+ * Use of Lambdas was encouraged by my friend Mofeng Atlass as I was discussing how I could run the events from different functions
+ * I then did research on how I could use it properly
+ * Retrieved April 20, 2026 from https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html#use-case
+
+ * 
  * Version/date: 
  * 
  * Responsibilities of class:
@@ -37,8 +51,9 @@ public class MainGame
 
 	private Player player;//has-a
 	private List<Occurrence> possibleOccurrences = new ArrayList<>(); //has-many Occurrences stores all possible occurrences that can be randomly selected
-	private int occurrenceCount = 0;//has-a number of events or things have happened
+	private int occurrenceCount = 0;//has-a counts how many occurrences have happened during the journey
 	private GameWindow gameWindow = new GameWindow();//has-a 
+	private Map<String, Item> itemDatabase = new HashMap<>();//has-many possible items
 	
 	private CombatManager combatManager;
 
@@ -46,6 +61,7 @@ public class MainGame
 	public MainGame()
 	{
 		setupOccurrences(); //initializes occurrences
+		
 		
 	}
 	public static void main(String[] args)
@@ -57,18 +73,29 @@ public class MainGame
 	
 	public void start()
 	{
-		TextUtils.print("Hello! Welcome!");
-
-
-		player = new Player("You", 100, 20);
-
-		mainMenu();// opens main menu
-
+		try
+		{
+			TextUtils.print("Hello! Welcome!");
+			
+			player = new Player("You", 100, 20, this);
+			setupItems(); //initializes items
+			combatManager = new CombatManager(player, this);//initializes combat manager
+			mainMenu();// opens main menu
+			
+		}
+		catch (Exception e)
+		{
+			JOptionPane.showMessageDialog(gameWindow.getMainFrame(), e.getMessage());
+			System.exit(0);
+			
+		}
+		
 	}
 
 	public void mainMenu()
 	{
 		String[] labels = {"Play", "Stats", "Load", "Quit"};
+		
 		Runnable[] actions = new Runnable[4];
 
 		TextUtils.print("\n=== Main Menu ===");
@@ -77,28 +104,42 @@ public class MainGame
 		TextUtils.print("3. Load Save");
 		TextUtils.print("4. Quit");
 		TextUtils.print("Select 1-4");
-			
+		
+		//sets the first button's runnable to start the game
 		actions[0] = () ->
 		{
-			combatManager = new CombatManager(player, this);
+			
 			TextUtils.print("\nYour journey begins...");
 			startJourney();
 		};
+		//sets the second button's runnable to show  player stats
 		actions[1] = () ->
 		{
 			player.showStats();
 		};
+		//sets the third button's runnable to load player's savedata and run the game
 		actions[2] = () ->
 		{
-			loadGame();
-			startJourney();
+			try
+			{
+				loadGame();
+				startJourney();
+			}
+			catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(gameWindow.getMainFrame(), e.getMessage());
+			}
+			
+			
 		};
+		//sets the 4th button's runnable to quit the game
 		actions[3] = () ->
 		{
 			//quit
 			System.exit(0);
 		};
 		
+		//sets the runnable actions and text of each button
 		gameWindow.setButtonActions(labels, actions);
 
 		
@@ -127,9 +168,20 @@ public class MainGame
 		
 		actions[1] = () ->
 		{
-			saveGame();
-			TextUtils.print("Game Saved");
-			mainMenu();
+			try
+			{
+				saveGame();
+				TextUtils.print("Game Saved");
+			}
+			catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(gameWindow.getMainFrame(), e.getMessage());
+			}
+			finally
+			{
+				mainMenu();
+			}
+			
 		};
 		
 		gameWindow.setButtonActions(labels, actions);
@@ -145,59 +197,149 @@ public class MainGame
 
 	private void saveGame()
 	{
-		// TODO Auto-generated method stub
+		try (PrintWriter saveWriter = new PrintWriter(new FileWriter("save.txt")))
+		{
+			saveWriter.println("name=" + player.getName());//writes player name variable to the save file
+			saveWriter.println("health=" + player.getHealth());//writes the player's health value to the save file
+			saveWriter.println("attack=" + player.getAttack());//writes the player's attack value to the save file
+			saveWriter.println("occurrenceCount=" + occurrenceCount);//writes the total number of occurrences visited to the save file
+			saveWriter.println("currency=" + player.getCurrency()); // writes the player's currency amount to the save file
+	        String[] inv = player.getInventory();
+
+	        saveWriter.print("inventory=");
+	        for (int i = 0; i < inv.length; i++) {
+	            if (inv[i] == null)
+	            	saveWriter.print("null");//if the slot has no item print null to the file
+	            else
+	            	saveWriter.print(inv[i]);//if there is an item the name of it gets printed to the file
+
+	            if (i < inv.length - 1)
+	            	saveWriter.print(",");//separates each item with a comma
+	        }
+	        saveWriter.println();
+	        
+
+		}
+		catch (IOException e)
+		{
+			throw new IllegalStateException("failed to save game");
+		}
+	}
+	
+	
+	private void loadInventory(String data) 
+	{
+	    String[] items = data.split(",");
+	    String[] inventory = player.getInventory();
+
+	    for (int i = 0; i < inventory.length && i < items.length; i++) //iterates through the player inventory
+	    {
+	        if (items[i].equals("null"))//if the save slot has null the inventory slot is set to null
+	            inventory[i] = null;
+	        else
+	            inventory[i] = items[i];//sets the item slot to the saved item
+	    }
 	}
 	
 	private void loadGame()
 	{
-		// TODO Auto-generated method stub	
+		try (BufferedReader reader = new BufferedReader(new FileReader("save.txt")))//creates and uses a new reader
+		{
+			
+			String line;
+			while ((line = reader.readLine()) != null)//while there is a line to read 
+			{
+				String[] parts = line.split("="); //splits the line at the = to separate the variable from its value
+				//the first part will be the name of the variable and the second will be its value
+				
+				switch (parts[0])//gets the name of the variable
+				{
+					case "name":
+						player.setName(parts[1]);//sets the player's name as the saved name
+						break;
+					case "HP":
+						player.setHP(Integer.parseInt(parts[1]));//sets the player's health to the saved value
+						break;
+					case "attack":
+						player.setAttack(Integer.parseInt(parts[1]));//sets the player's attack to the saved value
+						break;
+					case "occurrenceCount" :
+						occurrenceCount = (Integer.parseInt(parts[1]));//sets the game's occurrence count to the saved value
+						break;
+					case "currency":
+						player.setCurrency(Integer.parseInt(parts[1]));//sets the player's currency to the saved value
+						break;
+					case "inventory":
+						loadInventory(parts[1]);//sets the player's inventory to the saved values
+						break;
+					
+				}
+			}
+			
+		}
+		catch (IOException e)
+		{
+			throw new IllegalStateException("SAVE FILE NOT FOUND");
+		}
 	}
 	
 	
+	private void setupItems()//creates new item types and adds them to the database
+	{
+		itemDatabase.put("Potion", new Item("Potion", "Restores 20 HP", 20));
+		itemDatabase.put("Super Potion", new Item("Super Potion", "Restores 20 HP", 20));
+		itemDatabase.put("Bomb", new Item("Bomb", "Deals 30 damage to the enemy", 30));
+		itemDatabase.put("Knife", new Item("Knife", "Deals double your attack value", player.getAttack() * 2));
+		
+	}
+	
+
 	
 	
+	//adds the occurrences to the possibleOccurences list
 	private void setupOccurrences()
 	{
 		possibleOccurrences.add(new Occurrence(
-				"Warrior On the Road",
-				"You cross paths with a warrior on the road.",
-				() -> warriorEvent()
+				"Warrior On the Road", //name
+				"You cross paths with a warrior on the road.", //description
+				() -> warriorEvent() //runnable is the warriorEvent function in this mainGame class
 				));
 		possibleOccurrences.add(new Occurrence(
-				"Goblin Encounter",
-				"A goblin jumpscares you on the road.",
-				() -> goblinEvent()
+				"Goblin Encounter", //name
+				"A goblin jumpscares you on the road.", //description
+				() -> goblinEvent()//runnable is the goblinEvent function in this mainGame class
 				));
 		possibleOccurrences.add(new Occurrence(
-				"Goblin robbery",
-				"A goblin wants your money",
-				() -> robberyEvent()
+				"Goblin robbery", //name
+				"A goblin wants your money", //description
+				() -> robberyEvent()//runnable is the robberyEvent function in this mainGame class
 				));
 		possibleOccurrences.add(new Occurrence(
-				"Suspicious drawer",
-				"You found a drawer in an abandoned building",
-				() -> investigateDrawer()
+				"Suspicious drawer", //name
+				"You found a drawer in an abandoned building", //description
+				() -> investigateDrawer()//runnable is the investigateDrawer function in this mainGame class
 				));
 		possibleOccurrences.add(new Occurrence(
-				"Wolf attack",
-				 "You hear a howl and see a wolf running at you!",
-				 () -> wolfAttack()
+				"Wolf attack", //name
+				 "You hear a howl and see a wolf running at you!", //description
+				 () -> wolfAttack()//runnable is the wolfAttack function in this mainGame class
 				 ));
 		possibleOccurrences.add(new Occurrence(
-				"Strange Cheese",
-				"You find a cheese in the middle of the road.",
-				() -> ratQuest()
+				"Strange Cheese", //name
+				"You find a cheese in the middle of the road.", //description
+				() -> ratQuest()//runnable is the ratQuest function in this mainGame class
 				));
 		possibleOccurrences.add(new Occurrence(
-				"Ogre roadblock",
-				"An ogre is standing in front of you...",
-				() -> ogreBlocking()
+				"Ogre roadblock", //name
+				"An ogre is standing in front of you...", //description
+				() -> ogreBlocking()//runnable is the ogreBlocking function in this mainGame class
 				));
 	}
 	
 	
 	private void triggerRandomOccurrence()
 	{
+		//if the player has enough currency they get increased health and attack
 		if(player.getCurrency() >= 30)
 		{
 			if (occurrenceCount != 0)
@@ -214,16 +356,21 @@ public class MainGame
 							
 
 			
-			
+			//gets a random number corresponding to a possible occurrence
 			int index = (int)(Math.random() * possibleOccurrences.size());
 			
+			//gets the occurrence that corresponds to the gotten index
 			Occurrence event = possibleOccurrences.get(index);
+			//prints the name of the occurrence
 			TextUtils.print("\nEvent: " + event.getName());
+			//prints the description of the occurrence
 			TextUtils.print(event.getDescription());
 			
 			event.trigger();
 			occurrenceCount += 1;
 		}
+		
+		//if the player does not have enough currency their journey ends
 		else
 		{
 			
@@ -236,7 +383,7 @@ public class MainGame
 	
 	private void warriorEvent()
 	{
-		
+		//the button labels for this event
 		String[] labels = {"Fight", "Talk", "Ignore"};
 		Runnable[] actions = new Runnable[4];
 		TextUtils.print("Choose 1. Fight them, 2. Talk to them, 3. Ignore them");
@@ -245,29 +392,35 @@ public class MainGame
 		
 		
 		actions[0] = () ->
+		//the first button's runnable is this
 		{
 			TextUtils.print("You draw your weapon and take a fighting stance");
 			Enemy warrior = new Warrior();
 			combatManager.startBattle(warrior);
 		};
+		
 		actions[1] = () ->
+		//the second button's runnable is this
 		{
 			TextUtils.print("You decide to say a few words.");
 			TextUtils.print("Greetings fellow traveler. Take this potion and stay safe.");
-			player.addItem("Potion");
+			player.addItem("Potion");//adds a potion to the player's inventory
 			TextUtils.print("You obtained a potion!");
 			startJourney();
 		};
 		
 		actions[2] = () ->
+		//the third button's runnable is this
 		{
 			TextUtils.print("You walk past the warrior, and glance back over your shoulder... He is glaring at you.");
 			TextUtils.print("You start running away and trip...");
 			player.changeCurrency(-30);
 			startJourney();
 		};
-
-		gameWindow.setButtonActions(labels, actions);
+		
+		//there is not a 4th action here so the 4th button will be disabled
+		
+		gameWindow.setButtonActions(labels, actions);//sets the 
 
 		
 	}
@@ -283,12 +436,13 @@ public class MainGame
 	
 	private void ratQuest()
 	{	
-		
+		//the button labels for this event
 		String[] labels = {"Eat", "Hit"};
 		Runnable[] actions = new Runnable[4];
 		TextUtils.print("Choose 1. Eat the cheese, 2. hit the cheese");
 		
 		actions[0] = () ->
+		//the first button's runnable is this
 		{
 			TextUtils.print("You eat the cheese.");
 			player.heal(10);
@@ -298,6 +452,7 @@ public class MainGame
 			startJourney();
 		};
 		actions[1] = () ->
+		//the second button's runnable is this
 		{
 			TextUtils.print("An offended rat comes up to you and attacks!");
 			TextUtils.print("You ready yourself for a fight");
@@ -307,14 +462,16 @@ public class MainGame
 		};
 		
 		actions[2] = () ->
+		//the third button's runnable is this
 		{
 			TextUtils.print("You walk past the warrior, and glance back over your shoulder... He is glaring at you.");
 			TextUtils.print("You start running away and trip...");
 			player.changeCurrency(-30);
 			startJourney();
 		};
-
-		gameWindow.setButtonActions(labels, actions);
+		//there is not a 4th button in this event
+		
+		gameWindow.setButtonActions(labels, actions);//sets the button labels and runnable actions to the button
 		
 		
 
@@ -412,6 +569,10 @@ public class MainGame
 		
 	
 		
+	}
+	public Item getItem(String itemName)
+	{
+		return  itemDatabase.get(itemName);
 	}
 	
 }

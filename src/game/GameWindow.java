@@ -28,16 +28,22 @@ import util.TextUtils;
  */
 /**
  */
-public class GameWindow
+public class GameWindow extends JFrame
+//is-a JFrame
 {
-	private JFrame mainFrame;//has-a
+	private JFrame mainFrame;//has-
+	//change to "this" for all mainFrame variables
+
 	private JTextArea textArea;//has-a
 	private JPanel buttonPanel;//has-a
 	private Runnable[] buttonActions = new Runnable[4];
-	private JButton button1;
-	private JButton button2;
-	private JButton button3;
-	private JButton button4;
+	
+	
+	//the 4 total buttons are all on the same line and change based on the current occurrence
+	private JButton menuButton1;//has-a the first button in the gui
+	private JButton menuButton2;//has-a the 
+	private JButton menuButton3;//has-a
+	private JButton menuButton4;//has-a
 	
 	
 	
@@ -45,6 +51,7 @@ public class GameWindow
 	{
 
 		TextUtils.setWindow(this);
+		
 		mainFrame = new JFrame("Adventure");
 		textArea = new JTextArea();
 		textArea.setEditable(false);
@@ -52,48 +59,55 @@ public class GameWindow
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout());
 		
-		button1 = new JButton("1"); // signal 1
-		button2 = new JButton("2"); // signal 2
-		button3 = new JButton("3"); // signal 3
-		button4 = new JButton("4"); // signal 4
+		menuButton1 = new JButton("1"); // signal 1
+		menuButton2 = new JButton("2"); // signal 2
+		menuButton3 = new JButton("3"); // signal 3
+		menuButton4 = new JButton("4"); // signal 4
 		
-		button1.addActionListener(e-> runButton(0));
-		button2.addActionListener(e-> runButton(1));
-		button3.addActionListener(e-> runButton(2));
-		button4.addActionListener(e-> runButton(3));
+		//adds ActionListeners to each button
+		menuButton1.addActionListener(e-> runButton(0));
+		menuButton2.addActionListener(e-> runButton(1));
+		menuButton3.addActionListener(e-> runButton(2));
+		menuButton4.addActionListener(e-> runButton(3));
 		
 		
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.add(scrollPanel, BorderLayout.CENTER);
 		mainFrame.add(buttonPanel, BorderLayout.SOUTH);
 		
-		buttonPanel.add(button1);
-		buttonPanel.add(button2);
-		buttonPanel.add(button3);
-		buttonPanel.add(button4);
+		buttonPanel.add(menuButton1);
+		buttonPanel.add(menuButton2);
+		buttonPanel.add(menuButton3);
+		buttonPanel.add(menuButton4);
 		
 		
 		mainFrame.setSize(600,500);
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setVisible(true);
 		
 		
 	}
 	
+		public JFrame getMainFrame()
+	{
+		return mainFrame;
+	}
+
 	
 	private void runButton(int index) 
 	{
 		if (buttonActions[index] != null) 
 		{
-			buttonActions[index].run();
+			buttonActions[index].run(); //runs the button's runnable action
 		}
 	}
 	
-	
+	//sets each button's actions and text
 	public void setButtonActions(String[] labels, Runnable[] actions)
 	{
+		//iterates through 4 buttons
 		for (int i = 0; i < 4; i ++)
 		{
+			//checks to see if there are enough labels for each button
 			if (i < labels.length && i < actions.length)
 			{
 				buttonActions[i] = actions[i];
@@ -103,35 +117,62 @@ public class GameWindow
 				
 				
 			}
+			//if there are too many buttons for the given actions disable the extra buttons
 			else
 			{
-				buttonActions[i] = null;
-				setButtonText(i, "");
-				setButtonEnabled(i, false);
+				buttonActions[i] = null;//makes this button in buttonActions null
+				setButtonText(i, "");//clears the text on the button
+				setButtonEnabled(i, false);//disables the button
 				
 			}
 		}
 	}
 
+	//sets the text of the corresponding index parameter
 	private void setButtonText(int index, String text) 
 	{
+		
 		switch (index) 
 	    {
-	    	case 0 -> button1.setText(text);
-	    	case 1 -> button2.setText(text);
-	    	case 2 -> button3.setText(text);
-	    	case 3 -> button4.setText(text);
+	    	case 0:
+	    		menuButton1.setText(text);
+	    		break;
+	    	case 1:
+	    		menuButton2.setText(text);
+	    		break;
+	    	case 2:
+	    		menuButton3.setText(text);
+	    		break;
+	    	case 3:
+	    		menuButton4.setText(text);
+	    		break;
+	    	default:
+	    		throw new IllegalArgumentException("Index invalid");
+	    		
 	    }
+		
 	}
 	
+	//enables the button of the corresponding buttonNumber parameter
 	public void setButtonEnabled(int buttonNumber, boolean enabled)
 	{
 		switch(buttonNumber)
 		{
-			case 0 -> button1.setEnabled(enabled);
-			case 1 -> button2.setEnabled(enabled);
-			case 2 -> button3.setEnabled(enabled);
-			case 3 -> button4.setEnabled(enabled);
+	    	case 0:
+	    		menuButton1.setEnabled(enabled);
+	    		break;
+	    	case 1:
+	    		menuButton2.setEnabled(enabled);
+	    		break;
+	    	case 2:
+	    		menuButton3.setEnabled(enabled);
+	    		break;
+	    	case 3:
+	    		menuButton4.setEnabled(enabled);
+	    		break;
+	    	default:
+	    		throw new IllegalArgumentException("Button does not exist");
+	    	
 			
 		}
 	}

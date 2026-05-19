@@ -25,7 +25,7 @@ import util.TextUtils;
  */
 public class Rat extends Enemy
 {
-	private int turn = 1;//has-a
+	private int turnCount = 1;//has-a
 	private int bites;//has-a
 	public Rat()
 	{
@@ -40,13 +40,13 @@ public class Rat extends Enemy
 		player.takeDamage(getAttack());
 		bites += 1;
 		
-		if (turn != 1)
+		if (turnCount != 1)
 		{
 			
 			TextUtils.print("Your previous wounds hurt so much..." );//player takes extra damage every turn
 			player.takeDamage(bites*4);
 		}
-		turn += 1;
+		turnCount += 1;
 	}
 }
 

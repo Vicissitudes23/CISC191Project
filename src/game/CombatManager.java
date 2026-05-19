@@ -18,7 +18,9 @@ import util.TextUtils;
  * Retrieved from https://open.umn.edu/opentextbooks/textbooks/java-java-java-object-oriented-problem-solving
  * 
  * <<add more references here>>
- *  
+ * Use of Lambdas was encouraged by my friend Mofeng Atlass as I was discussing how I could run the events from different functions
+ * I then did research on how I could use it properly
+ * Retrieved April 20, 2026 from https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html#use-case
  * Version/date: 
  * 
  * Responsibilities of class:
@@ -49,7 +51,7 @@ public class CombatManager
 	
 	public boolean checkEndCombat(Enemy enemy)
 	{
-		if (player.isAlive() && enemy.isAlive())
+		if (player.isAlive() && enemy.isAlive())//if the enemy and player are alive checks
 		{
 			return false;
 		}
@@ -59,12 +61,12 @@ public class CombatManager
 	
 	public void endBattle(Enemy enemy)
 	{
-		if (player.isAlive())
+		if (player.isAlive())//if the player is alive the player wins
 		{
 			TextUtils.print("You defeated the " + enemy.getName() + "!");
 			game.startJourney();
 		}
-		else
+		else//if the player is not alive the player loses
 		{
 			TextUtils.print("You were defeated...");
 			game.mainMenu();
@@ -72,6 +74,8 @@ public class CombatManager
 
 	        	
 	}
+	
+	//start tyhe player's turn
 	private void playerTurn(Enemy enemy)
 	{
 		//reset block at the start of each turn
@@ -105,16 +109,19 @@ public class CombatManager
 		//player checks bag
 		actions[2] = () ->
 		{
-			 player.showInventory();
-			 String[] inventory = player.getInventory();
-			 String[] itemLabels = new String[inventory.length + 1];
-			 Runnable[] itemActions = new Runnable[itemLabels.length];
+			 player.showInventory();//prints out the player's inventory
+			 String[] inventory = player.getInventory();  //puts the player's items into this array
+			 String[] itemLabels = new String[inventory.length + 1]; //contains the names of items
+			 Runnable[] itemActions = new Runnable[itemLabels.length];//contains the runnable segments in this array
 
-			 for (int i = 0; i < inventory.length; i++) 
+			 for (int i = 0; i < inventory.length; i++) //adds the item names and runnable segments into their respective arrays
 			 {
 				 String itemName = inventory[i];
 				 itemLabels[i] = (itemName != null) ? itemName : "Empty Slot";
 				 int index = i;
+				 
+				 //if the item exists run its runnable
+				 //if it doesnt return back to player menu
 				 itemActions[i] = () -> 
 				 {
 					 if (inventory[index] != null) 
@@ -130,9 +137,9 @@ public class CombatManager
 					 }
 				 };      
 			 } 
-			 itemLabels[3] = "Cancel";
-			 itemActions[3] = () -> playerTurn(enemy);
-			 game.getGameWindow().setButtonActions(itemLabels, itemActions);
+			 itemLabels[3] = "Cancel";//changes the 4th button to the cancel button
+			 itemActions[3] = () -> playerTurn(enemy);//makes the 4th button return back to the player's turn menu
+			 game.getGameWindow().setButtonActions(itemLabels, itemActions);//changes the buttons to the players items
 			 
 		};
 		//player checks status
@@ -143,12 +150,12 @@ public class CombatManager
 		};
 
 		
-		game.getGameWindow().setButtonActions(labels, actions);
+		game.getGameWindow().setButtonActions(labels, actions);//sets the buttons in the GameWindow to reflect the player's items
 		
 	
 	}
 	
-	
+	//function to star the enemy's turn
 	private void enemyTurn(Enemy enemy)
 	{
 		TextUtils.print("\n=== Opposing " + enemy.getName() + "'s turn ===");

@@ -1,6 +1,6 @@
 name=You
-health=34
+health=100
 attack=20
-occurrenceCount=1
+occurrenceCount=0
 currency=200
 inventory=null,null,null

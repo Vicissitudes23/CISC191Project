@@ -75,7 +75,7 @@ public class CombatManager
 	        	
 	}
 	
-	//start tyhe player's turn
+	//start the player's turn
 	private void playerTurn(Enemy enemy)
 	{
 		//reset block at the start of each turn
@@ -158,14 +158,19 @@ public class CombatManager
 	//function to star the enemy's turn
 	private void enemyTurn(Enemy enemy)
 	{
-		TextUtils.print("\n=== Opposing " + enemy.getName() + "'s turn ===");
-
-		//enemy takes their turn, behavior will change based on their class
-		enemy.takeTurn(player);
-		if (checkEndCombat(enemy)== false) 
+		if (enemy.getHealth() > 0)
 		{
-			playerTurn(enemy);
+			TextUtils.print("\n=== Opposing " + enemy.getName() + "'s turn ===");
+
+			//enemy takes their turn, behavior will change based on their class
+			enemy.takeTurn(player);
+			if (checkEndCombat(enemy)== false) 
+			{
+				playerTurn(enemy);
+			}
 		}
+				
+
 		
 	}
 	

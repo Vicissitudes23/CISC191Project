@@ -42,6 +42,7 @@ public class Wolf extends Enemy
 		
 
 		player.takeDamage(getAttack());
-		TextUtils.print("The wolf has gained " + 10 + " health");
+		heal(getAttack());
+		TextUtils.print("The wolf has gained " + getAttack() + " health");
 	}
 }

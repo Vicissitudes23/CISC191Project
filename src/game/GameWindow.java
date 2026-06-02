@@ -31,7 +31,7 @@ import util.TextUtils;
 public class GameWindow extends JFrame
 //is-a JFrame
 {
-	private JFrame mainFrame;//has-
+
 	//change to "this" for all mainFrame variables
 
 	private JTextArea textArea;//has-a
@@ -41,9 +41,9 @@ public class GameWindow extends JFrame
 	
 	//the 4 total buttons are all on the same line and change based on the current occurrence
 	private JButton menuButton1;//has-a the first button in the gui
-	private JButton menuButton2;//has-a the 
-	private JButton menuButton3;//has-a
-	private JButton menuButton4;//has-a
+	private JButton menuButton2;//has-a the second button in the gui
+	private JButton menuButton3;//has-a the third button in the gui
+	private JButton menuButton4;//has-a the fourth button in the gui
 	
 	
 	
@@ -52,7 +52,7 @@ public class GameWindow extends JFrame
 
 		TextUtils.setWindow(this);
 		
-		mainFrame = new JFrame("Adventure");
+		setTitle("Adventure");
 		textArea = new JTextArea();
 		textArea.setEditable(false);
 		JScrollPane scrollPanel = new JScrollPane(textArea);
@@ -71,9 +71,9 @@ public class GameWindow extends JFrame
 		menuButton4.addActionListener(e-> runButton(3));
 		
 		
-		mainFrame.setLayout(new BorderLayout());
-		mainFrame.add(scrollPanel, BorderLayout.CENTER);
-		mainFrame.add(buttonPanel, BorderLayout.SOUTH);
+		this.setLayout(new BorderLayout());
+		this.add(scrollPanel, BorderLayout.CENTER);
+		this.add(buttonPanel, BorderLayout.SOUTH);
 		
 		buttonPanel.add(menuButton1);
 		buttonPanel.add(menuButton2);
@@ -81,15 +81,15 @@ public class GameWindow extends JFrame
 		buttonPanel.add(menuButton4);
 		
 		
-		mainFrame.setSize(600,500);
-		mainFrame.setVisible(true);
+		this.setSize(600,500);
+		this.setVisible(true);
 		
 		
 	}
 	
 		public JFrame getMainFrame()
 	{
-		return mainFrame;
+		return this;
 	}
 
 	

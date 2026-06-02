@@ -1,6 +1,5 @@
 package game;
 
-import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,6 +24,8 @@ import util.TextUtils;
  * 
  * Other contributors:
  * <<add additional contributors (mentors, tutors, friends) here, with contact information>>
+ * Mofeng Atlass (858)-266-8514
+ * Elijah Jones (619)-888-8301
  * 
  * References:
  * Morelli, R., & Walde, R. (2016). Java, Java, Java: Object-Oriented Problem Solving.
@@ -37,7 +38,13 @@ import util.TextUtils;
  * Use of Lambdas was encouraged by my friend Mofeng Atlass as I was discussing how I could run the events from different functions
  * I then did research on how I could use it properly
  * Retrieved April 20, 2026 from https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html#use-case
-
+ * 
+ * was curious to see if I could use other methods to read from files and saw buffered reader on this website 
+ * then I had the idea to try and use buffered reader instead of scanner to see how it would work as opposed to scanner
+ * Retrieved May 16, 2026 from https://docs.oracle.com/javase/8/docs/api/java/io/BufferedReader.html
+ * I used this website to see the differences between bufferedReader and scanner and how they are implemented differently
+ * Retrieved May 16, 2026 from https://www.baeldung.com/java-buffered-reader
+ * 
  * 
  * Version/date: 
  * 
@@ -55,7 +62,7 @@ public class MainGame
 	private GameWindow gameWindow = new GameWindow();//has-a 
 	private Map<String, Item> itemDatabase = new HashMap<>();//has-many possible items
 	
-	private CombatManager combatManager;
+	private CombatManager combatManager;//has-a
 
 	
 	public MainGame()
@@ -222,7 +229,7 @@ public class MainGame
 		}
 		catch (IOException e)
 		{
-			throw new IllegalStateException("failed to save game");
+			JOptionPane.showMessageDialog(gameWindow.getMainFrame(), e.getMessage());
 		}
 	}
 	
@@ -243,12 +250,12 @@ public class MainGame
 	
 	private void loadGame()
 	{
-		try (BufferedReader reader = new BufferedReader(new FileReader("save.txt")))//creates and uses a new reader
+		try (Scanner saveLoader = new Scanner(new FileReader("save.txt")))
 		{
 			
-			String line;
-			while ((line = reader.readLine()) != null)//while there is a line to read 
+			while (saveLoader.hasNextLine())
 			{
+				String line = saveLoader.nextLine();
 				String[] parts = line.split("="); //splits the line at the = to separate the variable from its value
 				//the first part will be the name of the variable and the second will be its value
 				
@@ -258,7 +265,7 @@ public class MainGame
 						player.setName(parts[1]);//sets the player's name as the saved name
 						break;
 					case "HP":
-						player.setHP(Integer.parseInt(parts[1]));//sets the player's health to the saved value
+						player.setHealth(Integer.parseInt(parts[1]));//sets the player's health to the saved value
 						break;
 					case "attack":
 						player.setAttack(Integer.parseInt(parts[1]));//sets the player's attack to the saved value
@@ -275,11 +282,10 @@ public class MainGame
 					
 				}
 			}
-			
 		}
 		catch (IOException e)
 		{
-			throw new IllegalStateException("SAVE FILE NOT FOUND");
+			JOptionPane.showMessageDialog(gameWindow.getMainFrame(), e.getMessage());
 		}
 	}
 	

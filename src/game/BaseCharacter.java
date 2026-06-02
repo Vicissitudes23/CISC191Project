@@ -29,16 +29,16 @@ public class BaseCharacter
 {
 
 	private String name;//has-a
-	private int health;//has-a
-	private int attack;//has-a
+	private int healthPoints;//has-a
+	private int attackPoints;//has-a
 	private boolean guarding;//has-a guarding state to take less damage on the next attack
 
 		
 	public BaseCharacter(String name, int health, int attack) //sets character stats
 	{
 		this.name = name;
-		this.health = health;
-		this.attack = attack;
+		this.healthPoints = health;
+		this.attackPoints = attack;
 	}
 		
 	public void takeDamage(int damage)
@@ -46,20 +46,20 @@ public class BaseCharacter
 		if (guarding == true)//when blocking damage is reduced by 25%
 		{
 			int reducedDamage = damage - (int)(damage *0.25);
-			health -= reducedDamage;
-			if (health < 0) health = 0; //if the attack did not defeat the character
+			healthPoints -= reducedDamage;
+			if (healthPoints < 0) healthPoints = 0; //if the attack did not defeat the character
 			TextUtils.print(name + " blocked the attack, reducing the damage of the blow."); 
 			TextUtils.print(name + " took " + reducedDamage + " damage!");
 			
 		}
 		else
 		{
-			health -= damage; //damage is normal when not blocking
-			if (health < 0) health = 0; //if the attack did not defeat the character
+			healthPoints -= damage; //damage is normal when not blocking
+			if (healthPoints < 0) healthPoints = 0; //if the attack did not defeat the character
 			TextUtils.print(name + " took " + damage + " damage!");
 		}
 			
-		TextUtils.print(name + " has "+ health + " health remaining");
+		TextUtils.print(name + " has "+ healthPoints + " health remaining");
 
 		
 	}
@@ -67,12 +67,12 @@ public class BaseCharacter
 	//Getters
 	public int getHealth()
 	{
-		return health;
+		return healthPoints;
 	}
 	
 	public int getAttack()
 	{
-		return attack;
+		return attackPoints;
 	}
 		
 	public String getName()
@@ -82,7 +82,7 @@ public class BaseCharacter
 	
 	public boolean isAlive()
 	{
-		if (health > 0)
+		if (healthPoints > 0)
 		{
 			return true;
 		}
@@ -98,37 +98,32 @@ public class BaseCharacter
 		
 	public void setHealth(int amount)
 	{
-		this.health = amount;
+		this.healthPoints = amount;
 	}
 		
 	public void setAttack(int amount)
 	{
-		this.attack = amount;
+		this.attackPoints = amount;
 	}
 		
 	public void increaseAttack(int amount)
 	{
-		this.attack += amount;
+		this.attackPoints += amount;
 	}
 	
 	public void decreaseAttack(int amount)
 	{
-		this.attack -= amount;
-		if (this.attack < 0)//caps the lower limit to 0
+		this.attackPoints -= amount;
+		if (this.attackPoints < 0)//caps the lower limit to 0
 		{
-			this.attack = 0;
+			this.attackPoints = 0;
 		}
 	}
 	
-	public void setHP(int amount)
-	{
-		this.health = amount;
-		
-	}
 		
 	public void heal(int amount)
 	{
-		health += amount;
+		healthPoints += amount;
 	}
 	
 	public void startBlock()//Blocking
@@ -150,7 +145,7 @@ public class BaseCharacter
 	//Show Stats
 	public void showStats()
 	{
-		TextUtils.print("\nCharacter: " + name + " | HP: "+ health + " | attack: " + attack );
+		TextUtils.print("\nCharacter: " + name + " | HP: "+ healthPoints + " | attack: " + attackPoints );
 	}
 	
 

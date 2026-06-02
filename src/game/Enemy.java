@@ -29,7 +29,7 @@ public abstract class Enemy extends BaseCharacter
 	public Enemy(String name, int health, int attack)
 	{
 		super(name, health, attack);
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public abstract void takeTurn(Player player);

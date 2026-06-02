@@ -1,7 +1,5 @@
 package game;
 
-import java.util.HashMap;
-import java.util.Map;
 
 import util.TextUtils;
 
@@ -33,7 +31,8 @@ public class Player extends BaseCharacter
 {
 	private int currencyAmount;//has-a
 	private MainGame game; //has-a
-	private String[] inventory = new String[3];//has-many item identifiers uses hashmap
+	private String[] inventory = new String[3];//has-many stores item names as opposed to items as I had already set up items in a way that would make it hard to store them directly without making major changes
+	//i will use this mistake as a lesson in the future but I will not attempt to fix it in this project
 	
 	
 	public Player(String name, int health, int attack, MainGame game)
@@ -107,7 +106,7 @@ public class Player extends BaseCharacter
 	    	TextUtils.print("Unknown item.");
 	        return;
 	    }
-
+	
 	    switch (item.getName()) {
 
 	        case "Potion":

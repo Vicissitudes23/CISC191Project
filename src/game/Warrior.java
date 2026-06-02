@@ -24,10 +24,11 @@ import util.TextUtils;
 /**
  */
 
-public class Warrior extends game.Enemy
+public class Warrior extends Enemy
+//is-a
 {
-	private int turnCount = 1;
-	private boolean charged;
+	private int turnCount = 1;//has-a
+	private boolean chargedState;//has-a
 	
 	public Warrior()
 	{
@@ -46,16 +47,16 @@ public class Warrior extends game.Enemy
 		}
 		else
 		{
-			if (charged)
+			if (chargedState)
 			{
 				TextUtils.print("The " + getName() + " cleaves you in two!!!");
 				player.takeDamage(50);
-				charged = false;
+				chargedState = false;
 				
 			}
 			else
 			{
-				charged = true;
+				chargedState = true;
 				TextUtils.print("The " + getName() + "'s aura flares up");
 			}
 		}

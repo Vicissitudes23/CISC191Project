@@ -35,7 +35,7 @@ public class Item
 		this.description = description;
 		this.power = power;
 	}
-
+	
 	public String getName()
 	{
 		return name;
